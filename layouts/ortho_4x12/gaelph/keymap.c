@@ -15,6 +15,7 @@
  */
 
 #include QMK_KEYBOARD_H
+#include "action_tapping.h"
 #include <keymap_french_mac_iso.h>
 #include <sendstring_french_mac_iso.h>
 #include <print.h>
@@ -27,6 +28,8 @@
 #include "./defs.h"
 #include "./combos.h"
 #include "./custom_keycodes.h"
+
+extern uint16_t g_tapping_term;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Annie Layeer
@@ -485,14 +488,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // so if there is a key interrupting it while pressed
 // we trigger the code layer immediately
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
-    if (keycode == CD_ENT) return true;
-    if (keycode == MO(_FRENCH)) return true;
+    switch (keycode) {
+        case CD_ENT:
+        case FR_ESC:
+        case MO(_FRENCH):
+            return true;
+    }
     return false;
 }
 
 // Never allow permissive holds
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case FR_ESC:
         case NM_SPC:
             return true;
     }

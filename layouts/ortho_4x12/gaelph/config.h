@@ -24,7 +24,7 @@
 #define QUICK_TAP_TERM 0
 
 // Tap-Hold config for Home row mods
-#define TAPPING_TERM 300
+#define TAPPING_TERM 250
 // #define IGNORE_MOD_TAP_INTERRUPT // That should be the default, in a future version?
 #define TAPPING_TERM_PER_KEY
 #define HOLD_ON_OTHER_KEY_PRESS
