@@ -16,6 +16,7 @@
 
 #include QMK_KEYBOARD_H
 #include "action_tapping.h"
+#include "quantum/logging/debug.h"
 #include <keymap_french_mac_iso.h>
 #include <sendstring_french_mac_iso.h>
 #include <print.h>

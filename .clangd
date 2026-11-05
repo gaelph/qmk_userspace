@@ -225,4 +225,7 @@ CompileFlags:
     - -I/Users/gaelphilippe/projects/qmk/keyboards/boardsource/equals/48
     - -I/Users/gaelphilippe/projects/qmk/./platforms/chibios/boards/GENERIC_PROMICRO_RP2040/configs
   Remove: [-W*, -mcall-prologues]
-  Compiler: clang
+  Compiler: arm-none-eabi-gcc
+Diagnostics:
+    Suppress:
+      - unused-includes
