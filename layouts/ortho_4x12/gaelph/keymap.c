@@ -21,6 +21,7 @@
 #include <print.h>
 
 #include "./features/hid.h"
+#include "./features/pc_azerty.h"
 #ifdef KEYBOARD_dm9records_plaid
 #    include "./features/plaid_led.h"
 #endif
@@ -32,9 +33,9 @@
 extern uint16_t g_tapping_term;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    /* Annie Layeer
+    /* Annie layout (Mac / PC)
      * ,-----------------------------------------------------------------------------------------------------------.
-     * | Tab              |   Q  |   C   |   L  |   P  |   B   |   K   |   F  |   O  |   Y  |   K  | Bksp          |
+     * | Tab              |   Q  |   C   |   L  |   P  |   B   |   K   |   F  |   O  |   Y  |   -  | Bksp          |
      * |------------------+------+-------+------+------+-------+-------+------+------+------+------+---------------|
      * | Esc or AnnieAlt  |   A  |   S   |   R  |   T  |   G   |   M   |   N  |   E  |   I  |   U  | AnneAlt       |
      * |------------------+------+-------+------+------+-------|-------+------+------+------+------+---------------|
@@ -44,19 +45,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * `--------------------------------------------------------------------------------------------------------'
      */
     // clang-format off
-[_ANNIE] = LAYOUT_ortho_4x12(
-  KC_TAB,  FR_Q,    FR_C,    FR_L,    FR_P,    FR_B,   FR_K,   FR_F,    FR_O,    FR_Y,    FR_MINS, KC_BSPC,
-  FR_ESC,  LCTL_A,  LALT_S,  LGUI_R,  FR_T,    FR_G,   FR_M,   FR_N,    RGUI_E,  RALT_I,  RCTL_U,  MO(_FRENCH),
-  CT_ALT,  FR_Z,    FR_V,    FR_J,    FR_D,    FR_W,   FR_X,   FR_H,    FR_COMM, FR_DOT,  FR_SLSH, CT_ALT,
-  KC_RALT, KC_LCTL, KC_LALT, KC_LGUI, KC_LSFT, NM_SPC, CD_ENT, KC_RSFT, KC_RGUI, KC_RALT, KC_RCTL, KC_RALT
-),
-
-[_QWERTY] = LAYOUT_ortho_4x12(
-  KC_TAB,  FR_Q,    FR_W,    FR_E,    FR_R,    FR_T,    FR_Y,    FR_U,    FR_I,    FR_O,    FR_P,    KC_BSPC,
-  KC_ESC,  FR_A,    FR_S,    FR_D,    FR_F,    FR_G,    FR_H,    FR_J,    FR_K,    FR_L,    FR_SCLN, FR_QUOT,
-  CT_ALT,  FR_Z,    FR_X,    FR_C,    FR_V,    FR_B,    FR_N,    FR_M,    FR_COMM, FR_DOT,  FR_SLSH, CT_ALT,
-  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
-),
+// Both hosts use exactly the same layout and tap/hold keys. The PC mode
+// translates the Mac French symbol keycodes in process_record_user.
+#define ANNIE_LAYOUT LAYOUT_ortho_4x12( \
+  KC_TAB,  FR_Q,    FR_C,    FR_L,    FR_P,    FR_B,   FR_K,   FR_F,    FR_O,    FR_Y,    FR_MINS, KC_BSPC, \
+  FR_ESC,  LCTL_A,  LALT_S,  LGUI_R,  FR_T,    FR_G,   FR_M,   FR_N,    RGUI_E,  RALT_I,  RCTL_U,  MO(_FRENCH), \
+  CT_ALT,  FR_Z,    FR_V,    FR_J,    FR_D,    FR_W,   FR_X,   FR_H,    FR_COMM, FR_DOT,  FR_SLSH, CT_ALT, \
+  KC_RALT, KC_LCTL, KC_LALT, KC_LGUI, KC_LSFT, NM_SPC, CD_ENT, KC_RSFT, KC_RGUI, KC_RALT, KC_RCTL, KC_RALT \
+)
+[_ANNIE] = ANNIE_LAYOUT,
+[_ANNIE_PC] = ANNIE_LAYOUT,
+#undef ANNIE_LAYOUT
 
 /* French Layer
  * ,-----------------------------------------------------------------------------------.
@@ -118,9 +117,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-------------------------------------------------------------------------------------.
  * | BOOT   |      |      | MGT  | MUGE |      |      |      |      |      |      |      |
  * |--------+------+------+------+------+-------------+------+------+------+------+------|
- * | ANNIE  | F1   | F2   | F3   | F4   | F5   | F6   | F7   | F8   | F9   | F10  |      |
+ * | Mac    | F1   | F2   | F3   | F4   | F5   | F6   | F7   | F8   | F9   | F10  |      |
  * |--------+------+------+------+------+------|------+------+------+------+------+------|
- * | QWERTY |      | BGT- | BGT+ |      |      | Mute | Next | Vol- | Vol+ | Play |      |
+ * | PC     |      | BGT- | BGT+ |      |      | Mute | Next | Vol- | Vol+ | Play |      |
  * |--------+------+------+------+------+------+------+------+------+------+------+------|
  * |        |      |      |      |      |             |      |      |      |      |      |
  * `-------------------------------------------------------------------------------------'
@@ -129,7 +128,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_ADJUST] = LAYOUT_ortho_4x12(
     QK_BOOT, RGB_TOG, RGB_MOD, RGB_RMOD, RGB_HUD, RGB_HUI, RGB_SAD, RGB_SAI, RGB_VAD, RGB_VAI, _______, _______,
     ANNIE,   KC_F1,   KC_F2,   KC_F3,    KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  RGB_SPD,
-    QWERTY,  DT_DOWN, KC_BRID, KC_BRIU,  DT_UP,   DT_PRNT, KC_MUTE, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY, RGB_SPI,
+    ANNIE_PC, DT_DOWN, KC_BRID, KC_BRIU,  DT_UP,   DT_PRNT, KC_MUTE, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY, RGB_SPI,
     _______, _______, _______, _______,  _______, _______, _______, _______, _______, _______, _______, _______
 )
 #endif
@@ -137,7 +136,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_ADJUST] = LAYOUT_plaid_grid(
     QK_BOOT, LED_1,   LED_2,   LED_3,   LED_4,   LED_5,   LED_6,   LED_7,   LED_8,   LED_9,   LED_0,   _______,
     ANNIE,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______,
-    QWERTY,  DT_DOWN, KC_BRID, KC_BRIU, DT_UP,   DT_PRNT, KC_MUTE, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY, _______,
+    ANNIE_PC, DT_DOWN, KC_BRID, KC_BRIU, DT_UP,   DT_PRNT, KC_MUTE, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 )
 #endif
@@ -208,20 +207,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 #endif
 
+    // Run before the Mac-specific macros below, including on shared layers.
+    if (!process_pc_azerty(keycode, record)) {
+        return false;
+    }
+
     switch (keycode) {
         // Default layer
         case ANNIE:
             if (record->event.pressed) {
-                print("mode just switched to annie and this is a huge strig\n");
+                print("mode switched to Annie for macOS French AZERTY\n");
                 set_single_persistent_default_layer(_ANNIE);
             }
             return false;
             break;
 
-        case QWERTY:
+        case ANNIE_PC:
             if (record->event.pressed) {
-                print("mode just switched to qwerty and this is a huge string\n");
-                set_single_persistent_default_layer(_QWERTY);
+                print("mode switched to Annie for Windows French AZERTY\n");
+                set_single_persistent_default_layer(_ANNIE_PC);
             }
             return false;
             break;

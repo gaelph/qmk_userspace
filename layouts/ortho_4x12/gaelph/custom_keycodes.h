@@ -6,7 +6,7 @@
 
 enum plaid_keycodes {
     ANNIE = SAFE_RANGE,
-    QWERTY,
+    ANNIE_PC,
     FRENCH,
     CODE,
     NUMBERS,

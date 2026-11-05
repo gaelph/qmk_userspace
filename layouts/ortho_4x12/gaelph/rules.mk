@@ -15,5 +15,6 @@ DYNAMIC_TAPPING_TERM_ENABLE = yes
 # keystats
 SRC += features/hid.c
 SRC += features/plaid_led.c
+SRC += features/pc_azerty.c
 # en/em dash
 SRC += key_overrides.c
